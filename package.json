@@ -19,5 +19,13 @@
   },
   "devDependencies": {
     "nodemon": "^3.1.14"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/edanter2006/IT-112_Week7_FullStackStarter_Lab.git"
+  },
+  "bugs": {
+    "url": "https://github.com/edanter2006/IT-112_Week7_FullStackStarter_Lab/issues"
+  },
+  "homepage": "https://github.com/edanter2006/IT-112_Week7_FullStackStarter_Lab#readme"
 }
