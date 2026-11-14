@@ -22,7 +22,7 @@
 
     app.get("/", (req, res) => {
     res.send('<h1>Welcome to My Deployed App</h1><p><a href="/index.html">Go to User App</a></p>');
-});
+    });
 
     // Body parsers (required so req.body will not be undefined)
     app.use(express.json());
