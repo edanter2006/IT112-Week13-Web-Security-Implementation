@@ -26,6 +26,16 @@
     // Test route
     app.get("/api/health", (req, res) => res.json({ status: "ok" }));
 
+    // Homepage route
+    app.get("/", (req, res) => {
+        res.send("Welcome to My Deployed App");
+    });
+
+    // Status endpoint
+    app.get("/status", (req, res) => {
+        res.status(200).json({ status: "OK", timestamp: new Date() });
+    });
+
     // Mongo connect + start server
     async function start() {
     try {
