@@ -7,15 +7,13 @@ msg.innerHTML = `<div class="alert alert-${type}">${text}</div>`;
 setTimeout(() => (msg.innerHTML = ""), 2500);
 }
 
-async function loadUsers() {
-const res = await fetch("/api/users");
-const users = await res.json();
-
-userList.innerHTML = "";
-if (!users.length) {
-userList.innerHTML = `<div class="text-muted">No users yet.</div>`;
-return;
+async function loadOrders() {
+    const res = await fetch("/api/orders");
+    const data = await res.json();
+    console.log(data); // verify populated data
 }
+loadOrders();
+
 
 users.forEach(u => {
 const item = document.createElement("div");
