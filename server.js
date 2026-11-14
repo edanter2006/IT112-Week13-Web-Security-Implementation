@@ -10,6 +10,16 @@
 
     const app = express();
 
+    // Homepage route
+    app.get("/", (req, res) => {
+        res.send("Welcome to My Deployed App");
+    });
+
+    // Status endpoint
+    app.get("/status", (req, res) => {
+        res.status(200).json({ status: "OK", timestamp: new Date() });
+    });
+
     // Body parsers (required so req.body will not be undefined)
     app.use(express.json());
     app.use(express.urlencoded({ extended: true }));
@@ -25,16 +35,6 @@
 
     // Test route
     app.get("/api/health", (req, res) => res.json({ status: "ok" }));
-
-    // Homepage route
-    app.get("/", (req, res) => {
-        res.send("Welcome to My Deployed App");
-    });
-
-    // Status endpoint
-    app.get("/status", (req, res) => {
-        res.status(200).json({ status: "OK", timestamp: new Date() });
-    });
 
     // Mongo connect + start server
     async function start() {
