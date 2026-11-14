@@ -11,7 +11,7 @@ async function loadOrders() {
     try {
         const res = await fetch("/api/orders");
         const data = await res.json();
-        console.log(data); // verify populated data
+        console.log(data);
     } catch (err) {
         console.error("Error loading orders:", err);
     }
@@ -33,9 +33,12 @@ async function loadUsers() {
         users.forEach(u => {
             const item = document.createElement("div");
             item.className = "list-group-item d-flex justify-content-between align-items-center";
+            // Check for either username or name so it displays correctly
+            const displayName = u.username || u.name || "Unknown User";
+            
             item.innerHTML = `
                 <div>
-                    <div class="fw-semibold">${u.name}</div>
+                    <div class="fw-semibold">${displayName}</div>
                     <div class="text-muted">${u.email}${u.age ? " • Age " + u.age : ""}</div>
                 </div>
                 <button class="btn btn-sm btn-outline-danger">Delete</button>
@@ -58,8 +61,18 @@ async function loadUsers() {
 userForm.addEventListener("submit", async (e) => {
     e.preventDefault();
     const formData = new FormData(userForm);
-    const payload = Object.fromEntries(formData.entries());
-    if (payload.age === "") delete payload.age;
+    
+    // Map the form's "name" input to "username" and provide a default password if required by the model
+    const payload = {
+        username: formData.get("name"),
+        email: formData.get("email"),
+        password: "TempPassword123!", // Satisfies backend password requirement
+    };
+    
+    const ageVal = formData.get("age");
+    if (ageVal && ageVal !== "") {
+        payload.age = Number(ageVal);
+    }
 
     const res = await fetch("/api/users", {
         method: "POST",
@@ -69,7 +82,7 @@ userForm.addEventListener("submit", async (e) => {
 
     const data = await res.json();
     if (!res.ok) {
-        showMessage(data.error || "Failed to save", "danger");
+        showMessage(data.error || data.message || "Failed to save", "danger");
         return;
     }
 
