@@ -10,20 +10,6 @@
 
     const app = express();
 
-    // Homepage route
-    app.get("/", (req, res) => {
-        res.send("Welcome to My Deployed App");
-    });
-
-    // Status endpoint
-    app.get("/status", (req, res) => {
-        res.status(200).json({ status: "OK", timestamp: new Date() });
-    });
-
-    app.get("/", (req, res) => {
-    res.send('<h1>Welcome to My Deployed App</h1><p><a href="/index.html">Go to User App</a></p>');
-    });
-
     // Body parsers (required so req.body will not be undefined)
     app.use(express.json());
     app.use(express.urlencoded({ extended: true }));
