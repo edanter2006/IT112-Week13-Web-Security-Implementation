@@ -1,30 +1,34 @@
 const User = require('../models/User');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken'); // 1. Require jsonwebtoken
+const { validationResult } = require('express-validator');
 
 // REGISTER
 exports.register = async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
+
     try {
         const { username, email, password, confirmPassword, role } = req.body;
 
-        // 1. Confirm password validation
         if (password !== confirmPassword) {
             return res.status(400).json({ error: 'Passwords do not match' });
         }
 
-        // 2. Prevent duplicate emails
         const existingUser = await User.findOne({ email });
         if (existingUser) {
             return res.status(400).json({ error: 'Email is already registered' });
         }
 
-        // Hash password
         const hashedPassword = await bcrypt.hash(password, 10);
 
         const user = new User({
             username,
             email,
             password: hashedPassword,
-            role: role || 'user' // Allows specifying admin if passed, defaults to user
+            role: role || 'user'
         });
 
         await user.save();
@@ -53,8 +57,17 @@ exports.login = async (req, res) => {
             return res.status(400).json({ message: 'Invalid credentials' });
         }
 
+        // 2. Generate a signed JWT token
+        const token = jwt.sign(
+            { id: user._id, role: user.role },
+            process.env.JWT_SECRET,
+            { expiresIn: '1h' }
+        );
+
+        // 3. Return the token in the response
         res.status(200).json({
             message: 'Login successful',
+            token,
             user: {
                 id: user._id,
                 username: user.username,
@@ -72,7 +85,8 @@ exports.getProfile = async (req, res) => {
     try {
         res.status(200).json({
             message: 'Profile access granted',
-            userRole: req.user.role
+            userRole: req.user.role,
+            user: req.user
         });
     } catch (error) {
         res.status(500).json({ error: error.message });
